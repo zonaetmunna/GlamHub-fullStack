@@ -5,6 +5,8 @@ export interface CreateProductData {
   name: string;
   description: string;
   price: number;
+  stockCount: number;
+  imageUrl: string;
   categoryId?: string; // Optional field for category association
 }
 
@@ -21,6 +23,8 @@ export async function createProduct(data: CreateProductData): Promise<Product> {
       data: {
         name: data.name,
         description: data.description,
+        imageUrl: data.imageUrl,
+        stockCount: data.stockCount,
         price: data.price,
         // Use 'connect' if categoryId is provided, otherwise leave it undefined
         ...(data.categoryId
@@ -42,6 +46,11 @@ export async function getAllProducts(): Promise<Product[]> {
     const products = await prisma.product.findMany({
       include: {
         Category: true, // Use 'Category' instead of 'category'
+      },
+      where: {
+        createdAt: {
+          gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+        },
       },
     });
 

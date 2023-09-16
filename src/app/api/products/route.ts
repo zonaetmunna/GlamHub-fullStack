@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createProduct, getAllProducts } from "../../../../prisma/product";
 
+// post product api
 export async function POST(req: Request, res: NextResponse) {
   try {
     const body = await req.json();
@@ -18,6 +19,7 @@ export async function POST(req: Request, res: NextResponse) {
   }
 }
 
+// get products api
 export async function GET(req: Request, res: NextResponse) {
   try {
     const products = await getAllProducts();

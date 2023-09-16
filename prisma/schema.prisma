@@ -7,24 +7,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// user relatd model
 model User {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  name     String?
-  email    String  @unique
-  password String
-  orders   Order[]
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String?
+  email        String        @unique
+  password     String
+  orders       Order[]
+  profileImage String?
+  Appointment  Appointment[]
+  createdAt    DateTime      @default(now())
 }
 
+// product related model
 model Product {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   price       Float
-
-  Category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?   @db.ObjectId
-  Order      Order?    @relation(fields: [orderId], references: [id])
-  orderId    String?   @db.ObjectId
+  imageUrl    String?
+  stockCount  Int
+  Category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String   @db.ObjectId
+  Order       Order    @relation(fields: [orderId], references: [id])
+  orderId     String   @db.ObjectId
+  createdAt   DateTime @default(now())
 }
 
 model Category {
@@ -33,10 +40,32 @@ model Category {
   products Product[]
 }
 
+// order 
 model Order {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   user      User      @relation(fields: [userId], references: [id])
   userId    String    @db.ObjectId
   products  Product[]
+  status    String
   createdAt DateTime  @default(now())
+}
+
+// services related model
+model Service {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  price       Float
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+}
+
+model Appointment {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  user              User     @relation(fields: [userId], references: [id])
+  userId            String   @db.ObjectId
+  appointmentTypeId String   @db.ObjectId
+  scheduledTime     DateTime // Date and time of the appointment
+  status            String // Appointment status (e.g., confirmed, canceled, etc.)
+  createdAt         DateTime @default(now())
 }

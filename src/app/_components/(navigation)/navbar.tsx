@@ -20,6 +20,11 @@ export default function Navbar() {
                 Cart
               </p>
             </Link>
+            <Link href="/dashboard">
+              <p className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                Dashboard
+              </p>
+            </Link>
             <Link href="/login">
               <p className="text-gray-300 hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                 Login

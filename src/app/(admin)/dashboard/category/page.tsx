@@ -1,5 +1,5 @@
 "use client";
-import AddCategoryModal from "@/app/_components/addCategoryModal";
+import AddCategoryModal from "@/app/_components/(modal)/addCategoryModal";
 import DeleteCategoryModal from "@/app/_components/deleteCategoryModal";
 import UpdateCategoryModal from "@/app/_components/updateCategoryModal";
 import { useEffect, useState } from "react";

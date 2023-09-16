@@ -1,5 +1,5 @@
-import { login, signUp } from "@/lib/prisma/user";
 import { NextApiRequest, NextApiResponse } from "next";
+import { login, signUp } from "../../../../prisma/user";
 
 export default async function handler(
   req: NextApiRequest,

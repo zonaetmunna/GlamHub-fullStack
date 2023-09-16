@@ -8,5 +8,7 @@ interface IProduct {
   name: string;
   description: string;
   price: number;
+  imageUrl: string;
+  stockCount: number;
   categoryId?: string;
 }

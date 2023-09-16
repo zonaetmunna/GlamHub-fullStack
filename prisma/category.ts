@@ -1,15 +1,23 @@
 import { Category } from "@prisma/client";
 import prisma from "./prisma";
 
+// type for create category data
 interface CreateCategoryData {
   name: string;
 }
 
+// get all categories
 export async function getAllCategories(): Promise<Category[]> {
   try {
     const categories = await prisma.category.findMany({
       include: {
-        products: true,
+        products: {
+          where: {
+            createdAt: {
+              gte: new Date("2023-09-09T19:57:15.873Z"),
+            },
+          },
+        },
       },
     });
     return categories;
@@ -19,8 +27,8 @@ export async function getAllCategories(): Promise<Category[]> {
   }
 }
 
+// create category
 export async function createCategory(name: string): Promise<Category> {
-  //
   try {
     if (!name) {
       throw new Error("Name field is required");
@@ -39,6 +47,7 @@ export async function createCategory(name: string): Promise<Category> {
   }
 }
 
+// update category
 export async function updateCategory(
   id: string,
   data: CreateCategoryData
@@ -58,6 +67,7 @@ export async function updateCategory(
   }
 }
 
+// delete category
 export async function deleteCategory(id: string): Promise<void> {
   try {
     await prisma.category.delete({

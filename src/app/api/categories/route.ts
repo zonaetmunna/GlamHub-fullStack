@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createCategory, getAllCategories } from "../../../../prisma/category";
 
+// get categories api
 export async function GET(req: Request, res: NextResponse) {
   try {
     const categories = await getAllCategories();
@@ -14,6 +15,7 @@ export async function GET(req: Request, res: NextResponse) {
   }
 }
 
+// post category api
 export async function POST(request: Request) {
   try {
     const body = await request.json();
