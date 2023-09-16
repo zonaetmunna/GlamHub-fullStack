@@ -29,8 +29,8 @@ model Product {
   stockCount  Int
   Category    Category @relation(fields: [categoryId], references: [id])
   categoryId  String   @db.ObjectId
-  Order       Order    @relation(fields: [orderId], references: [id])
-  orderId     String   @db.ObjectId
+  Order       Order?   @relation(fields: [orderId], references: [id])
+  orderId     String?  @db.ObjectId
   createdAt   DateTime @default(now())
 }
 
