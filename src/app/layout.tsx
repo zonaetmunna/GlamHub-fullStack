@@ -1,10 +1,11 @@
 "use client";
 
+import { store } from "@/features/store";
 import { Inter } from "next/font/google";
 import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
 import Navbar from "./_components/(navigation)/navbar";
-import Providers from "./_components/Providers/providers";
 import Footer from "./_components/footer";
 import "./globals.css";
 
@@ -26,14 +27,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
+        <Provider store={store}>
           <Toaster />
           <Navbar />
           {/* {!isDashboardRoute && <Navbar />} */}
           {children}
           <Footer />
           {/* {!isDashboardRoute && <Footer />} */}
-        </Providers>
+        </Provider>
       </body>
     </html>
   );

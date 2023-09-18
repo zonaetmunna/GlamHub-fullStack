@@ -9,16 +9,22 @@ export const wishlistSlice = createSlice({
   initialState,
   reducers: {
     addToWishlist: (state, action) => {
-      state.wishlist.push(action.payload);
+      const product = action.payload;
+      if (!state.wishlist.some((item) => item.id === product.id)) {
+        state.wishlist.push(product);
+      }
     },
     removeFromWishlist: (state, action) => {
-      state.wishlist = state.wishlist.filter(
-        (item) => item.id !== action.payload
-      );
+      const productId = action.payload;
+      state.wishlist = state.wishlist.filter((item) => item.id !== productId);
+    },
+    clearWishlist: (state) => {
+      state.wishlist = [];
     },
   },
 });
 
-export const { addToWishlist, removeFromWishlist } = wishlistSlice.actions;
+export const { addToWishlist, removeFromWishlist, clearWishlist } =
+  wishlistSlice.actions;
 
 export default wishlistSlice.reducer;

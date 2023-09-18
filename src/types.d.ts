@@ -8,7 +8,7 @@ interface ICategory {
 }
 // product
 interface IProduct {
-  id?: string;
+  id: string;
   name: string;
   description: string;
   price: number;

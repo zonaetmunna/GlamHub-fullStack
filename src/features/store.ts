@@ -4,14 +4,12 @@ import wishlistSlice from "./wishlist/wishlistSlice";
 
 export const store = configureStore({
   reducer: {
+    // [apiSlice.reducerPath]: apiSlice.reducer,
     cart: cartSlice,
     wishlist: wishlistSlice,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-      immutableCheck: false,
-    }),
+  // middleware: (getDefaultMiddleware) =>
+  //   getDefaultMiddleware().concat(apiSlice.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
