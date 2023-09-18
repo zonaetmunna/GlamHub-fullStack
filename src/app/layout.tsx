@@ -1,5 +1,10 @@
+"use client";
+
 import { Inter } from "next/font/google";
+import { usePathname, useRouter } from "next/navigation";
+import { Toaster } from "react-hot-toast";
 import Navbar from "./_components/(navigation)/navbar";
+import Providers from "./_components/Providers/providers";
 import Footer from "./_components/footer";
 import "./globals.css";
 
@@ -15,12 +20,20 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const isDashboardRoute = pathname.startsWith("/dashboard");
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
-        {children}
-        <Footer />
+        <Providers>
+          <Toaster />
+          <Navbar />
+          {/* {!isDashboardRoute && <Navbar />} */}
+          {children}
+          <Footer />
+          {/* {!isDashboardRoute && <Footer />} */}
+        </Providers>
       </body>
     </html>
   );

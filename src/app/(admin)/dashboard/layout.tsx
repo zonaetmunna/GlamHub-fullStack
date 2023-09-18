@@ -1,4 +1,5 @@
-import Sidebar from "@/app/_components/(sidebar)/sidebar";
+import DashboardNavbar from "@/app/_components/(navigation)/dashboardNavbar";
+import DashboardSidebar from "@/app/_components/(sidebar)/dashboardSidebar";
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
@@ -8,9 +9,9 @@ export default function DashboardLayout({
   return (
     <section className="flex">
       <div className="flex flex-grow">
-        <Sidebar />
+        <DashboardSidebar />
         <div>
-          {/* <nav /> */}
+          <DashboardNavbar />
           <div className="container mx-auto p-6">{children}</div>
         </div>
       </div>

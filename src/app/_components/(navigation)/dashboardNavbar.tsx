@@ -1,14 +1,15 @@
-import Image from "next/image";
+"use client";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BiMessageSquare } from "react-icons/bi";
 import { FaBell, FaUserCircle } from "react-icons/fa";
 import { FiMaximize, FiMinimize, FiMoon, FiSun } from "react-icons/fi";
+import { useDispatch } from "react-redux";
+
 export default function DashboardNavbar() {
   const [isFullscreen, setIsFullscreen] = useState<true | false>(false);
-  const [isDarkMode, setIsDarkMode] = useState<true | false>(
-    localStorage.getItem("isDarkMode") === "true"
-  );
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState<true | false>(false);
   const [showNotifications, setShowNotifications] = useState<true | false>(
     false
@@ -49,9 +50,18 @@ export default function DashboardNavbar() {
   ]);
   const [newMessage, setNewMessage] = useState("");
 
-  //   const dispatch = useDispatch();
+  // hooks
+  const dispatch = useDispatch();
+  // modfiy future with real data
+  const user = {
+    role: "admin",
+    email: "zonaetmonna@gmail.com",
+  };
+  const email = user.email;
+  const role = user.role;
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // message submit textarea field handle
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(event.target.value);
   };
 
@@ -92,10 +102,20 @@ export default function DashboardNavbar() {
   const handleUserDropdown = () => {
     setShowUserDropdown(!showUserDropdown);
   };
+  useEffect(() => {
+    // Convert isDarkMode to a string before saving to localStorage
+    localStorage.setItem("isDarkMode", JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
 
   useEffect(() => {
-    localStorage.setItem("isDarkMode", isDarkMode);
-  }, [isDarkMode]);
+    // Retrieve the value from localStorage and parse it back to a boolean
+    const storedValue = localStorage.getItem("isDarkMode");
+    if (storedValue === "true") {
+      setIsDarkMode(true);
+    } else {
+      setIsDarkMode(false);
+    }
+  }, []);
 
   const handleModeToggle = () => {
     setIsDarkMode(!isDarkMode);
@@ -116,6 +136,7 @@ export default function DashboardNavbar() {
   const handleSignOUt = () => {
     // dispatch(logout());
   };
+
   return (
     <nav
       className={`px-2 py-3 ${
@@ -127,11 +148,12 @@ export default function DashboardNavbar() {
           <div className="flex">
             {/* dashboard logo */}
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <Image
+              {/* modify future */}
+              {/* <Image
                 className="h-8 w-auto rounded-full"
                 src={brandLogo}
                 alt="Workflow"
-              />
+              /> */}
               <span className="font-semibold text-xl ml-2">Dashboard</span>
             </Link>
           </div>
@@ -220,7 +242,7 @@ export default function DashboardNavbar() {
                   {notifications.map((notification) => (
                     <Link
                       key={notification.id}
-                      to="#"
+                      href="#"
                       className={`${
                         notification.isRead ? "text-gray-500" : "text-gray-900"
                       } block px-4 py-2 text-sm`}
@@ -262,14 +284,14 @@ export default function DashboardNavbar() {
                   >
                     <p>{email}</p>
                     <Link
-                      to="#"
+                      href="#"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       role="menuitem"
                     >
                       Your Profile
                     </Link>
                     <Link
-                      to="#"
+                      href="#"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       role="menuitem"
                     >
@@ -277,7 +299,7 @@ export default function DashboardNavbar() {
                     </Link>
                     <Link
                       onClick={handleSignOUt}
-                      to="#"
+                      href="#"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       role="menuitem"
                     >
