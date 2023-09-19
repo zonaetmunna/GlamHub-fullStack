@@ -1,20 +1,29 @@
 "use client";
+
 import AddCategoryModal from "@/app/_components/(modal)/addCategoryModal";
-import DeleteCategoryModal from "@/app/_components/deleteCategoryModal";
-import UpdateCategoryModal from "@/app/_components/updateCategoryModal";
-import { useEffect, useState } from "react";
+import DeleteCategoryModal from "@/app/_components/(modal)/deleteCategoryModal";
+import UpdateCategoryModal from "@/app/_components/(modal)/updateCategoryModal";
+import { useEffect, useMemo, useState } from "react";
+import { FaTimesCircle } from "react-icons/fa";
 
 const API_BASE_URL = "http://localhost:3000/api/categories";
 
 export default function Category() {
+  // sate for categories
   const [categories, setCategories] = useState<ICategory[]>([]);
+  // state for modal
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // state for selected category search and pagination
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
     null
   );
+  const [searchText, setSearchText] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
 
+  // fetch categories
   const fetchCategories = async () => {
     try {
       const response = await fetch(API_BASE_URL);
@@ -29,6 +38,26 @@ export default function Category() {
     // Fetch the list of categories when the page loads
     fetchCategories();
   }, []);
+
+  const filteredCategories = useMemo(() => {
+    let filtered = categories;
+
+    // Filter by search text
+    if (searchText) {
+      const lowerSearchText = searchText.toLowerCase();
+      filtered = filtered.filter((category) =>
+        category.name.toLowerCase().includes(lowerSearchText)
+      );
+    }
+
+    return filtered;
+  }, [categories, searchText]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleCategories = filteredCategories.slice(startIndex, endIndex);
 
   // Function to handle adding a new category
   const handleAddCategory = async (data: { name: string }) => {
@@ -88,12 +117,33 @@ export default function Category() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Categories</h1>
-      <button
-        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-        onClick={() => setShowAddModal(true)}
-      >
-        Add Category
-      </button>
+      {/* search and add category */}
+      <div className="flex items-center space-x-2 mb-4">
+        {/* input search */}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="border border-gray-300 rounded-md py-2 px-3 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {searchText && (
+            <button
+              onClick={() => setSearchText("")}
+              className="absolute right-0 top-0 h-full flex items-center pr-2 text-gray-500 hover:text-gray-700"
+            >
+              <FaTimesCircle className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          onClick={() => setShowAddModal(true)}
+        >
+          Add Category
+        </button>
+      </div>
 
       {/* Category Table List */}
       <table className="w-full mt-4">
@@ -104,8 +154,8 @@ export default function Category() {
           </tr>
         </thead>
         <tbody>
-          {categories.length > 0 ? (
-            categories.map((category) => (
+          {visibleCategories.length > 0 ? (
+            visibleCategories.map((category) => (
               <tr key={category.id}>
                 <td className="border px-4 py-2">{category.name}</td>
                 <td className="border px-4 py-2">
@@ -139,6 +189,25 @@ export default function Category() {
           )}
         </tbody>
       </table>
+
+      {/* Pagination */}
+      <div className="mt-4">
+        <span className="mr-2">Page {currentPage}</span>
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="mr-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded"
+        >
+          Next
+        </button>
+      </div>
 
       {/* Add Category Modal */}
       {showAddModal && (

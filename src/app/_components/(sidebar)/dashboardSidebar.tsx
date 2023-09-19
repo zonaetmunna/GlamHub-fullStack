@@ -31,14 +31,12 @@ export default function DashboardSidebar() {
   };
   const role = user.role;
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
+  // hooks routing
   const router = useRouter();
 
+  // state collapsed
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  // state
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isBrandsOpen, setIsBrandsOpen] = useState(false);
@@ -47,28 +45,30 @@ export default function DashboardSidebar() {
   const [isOrderOpen, setIsOrderOpen] = useState(false);
   const [isBlogOpen, setIsBlogOpen] = useState(false);
 
+  // handle toggle collapsed
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  // handle toggle menu
   const toggleProductMenu = () => {
     setIsProductOpen(!isProductOpen);
   };
-
   const toggleCategoriesMenu = () => {
     setIsCategoriesOpen(!isCategoriesOpen);
   };
   const toggleBrandsMenu = () => {
     setIsBrandsOpen(!isBrandsOpen);
   };
-
   const toggleVendorMenu = () => {
     setIsVendorOpen(!isVendorOpen);
   };
   const toggleCustomerMenu = () => {
     setIsCustomerOpen(!isCustomerOpen);
   };
-
   const toggleOrderMenu = () => {
     setIsOrderOpen(!isOrderOpen);
   };
-
   const toggleBlogMenu = () => {
     setIsBlogOpen(!isBlogOpen);
   };
@@ -76,8 +76,8 @@ export default function DashboardSidebar() {
   return (
     <div
       className={`${
-        isCollapsed ? "w-16" : "w-56"
-      } top-0 left-0 h-screen bg-gray-800 text-gray-100 flex flex-col transition-all duration-300 ease-in-out`}
+        isCollapsed ? "w-16 " : "w-56 "
+      }  top-0 left-0 h-screen bg-gray-800 text-gray-100 flex flex-col transition-all duration-300 ease-in-out`}
     >
       {role === "admin" && (
         <nav className="flex flex-col py-4 ">
@@ -102,15 +102,13 @@ export default function DashboardSidebar() {
           </button>
           <div className={`ml-4 ${isProductOpen ? "" : "hidden"}`}>
             <Link
-              href="product-list"
+              href="/dashboard/product"
               className="flex items-center py-2 px-4 text-gray-100 hover:bg-gray-700 rounded-md transition-colors duration-200"
             >
               <span className="mr-2">
                 <FaList />
               </span>
-              <span className={`${isCollapsed ? "hidden" : ""}`}>
-                Product List
-              </span>
+              <span className={`${isCollapsed ? "hidden" : ""}`}>Product</span>
             </Link>
             <Link
               href="product-add"
@@ -145,15 +143,13 @@ export default function DashboardSidebar() {
           </button>
           <div className={`ml-4 ${isCategoriesOpen ? "" : "hidden"}`}>
             <Link
-              href="category-list"
+              href="/dashboard/category"
               className="flex items-center py-2 px-4 text-gray-100 hover:bg-gray-700 rounded-md transition-colors duration-200"
             >
               <span className="mr-2">
                 <FaList />
               </span>
-              <span className={`${isCollapsed ? "hidden" : ""}`}>
-                Category List
-              </span>
+              <span className={`${isCollapsed ? "hidden" : ""}`}>Category</span>
             </Link>
           </div>
           {/* brand */}
@@ -177,7 +173,7 @@ export default function DashboardSidebar() {
           </button>
           <div className={`ml-4 ${isBrandsOpen ? "" : "hidden"}`}>
             <Link
-              href="brand-list"
+              href="/dashboard/brand"
               className="flex items-center py-2 px-4 text-gray-100 hover:bg-gray-700 rounded-md transition-colors duration-200"
             >
               <span className="mr-2">
@@ -307,7 +303,7 @@ export default function DashboardSidebar() {
           </button>
           <div className={`ml-4 ${isBlogOpen ? "" : "hidden"}`}>
             <Link
-              href="blogs"
+              href="/dashboard/blog"
               className="flex items-center py-2 px-4 text-gray-100 hover:bg-gray-700 rounded-md transition-colors duration-200"
             >
               <span className="mr-2">
@@ -315,21 +311,11 @@ export default function DashboardSidebar() {
               </span>
               <span className={`${isCollapsed ? "hidden" : ""}`}>Blogs</span>
             </Link>
-            <Link
-              href="add-blog"
-              className="flex items-center py-2 px-4 text-gray-100 hover:bg-gray-300 rounded-md"
-            >
-              <span className="mr-2">
-                <FaPlus />
-              </span>
-
-              <span className={`${isCollapsed ? "hidden" : ""}`}>Add Blog</span>
-            </Link>
           </div>
 
           {/* invoice */}
           <button
-            onClick={() => router.push("invoice")}
+            onClick={() => router.push("/dashboard/invoice")}
             className="flex items-center py-2 px-4  hover:bg-gray-700 rounded-md"
           >
             <span className="mr-2">
@@ -339,17 +325,17 @@ export default function DashboardSidebar() {
           </button>
           {/* setting */}
           <button
-            onClick={() => router.push("settings")}
+            onClick={() => router.push("/dashboard/setting")}
             className="flex items-center py-2 px-4  hover:bg-gray-700 rounded-md"
           >
             <span className="mr-2">
               <FaCog className="mr-4" />
             </span>
-            <span className={`${isCollapsed ? "hidden" : ""}`}>Settings</span>
+            <span className={`${isCollapsed ? "hidden" : ""}`}>Setting</span>
           </button>
           {/* messages */}
           <button
-            onClick={() => router.push("message")}
+            onClick={() => router.push("/dashboard/message")}
             className="flex items-center py-2 px-4  hover:bg-gray-700 rounded-md"
           >
             <span className="mr-2">
@@ -358,7 +344,7 @@ export default function DashboardSidebar() {
             <span className={`${isCollapsed ? "hidden" : ""}`}>Message</span>
           </button>
           <button
-            onClick={() => router.push("make-admin")}
+            onClick={() => router.push("/dashboard/make-admin")}
             className="flex items-center py-2 px-4  hover:bg-gray-700 rounded-md"
           >
             <span className="mr-2">

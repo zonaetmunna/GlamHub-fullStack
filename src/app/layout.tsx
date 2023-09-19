@@ -5,8 +5,8 @@ import { Inter } from "next/font/google";
 import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";
+import Footer from "./_components/(footer)/footer";
 import Navbar from "./_components/(navigation)/navbar";
-import Footer from "./_components/footer";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,11 +29,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <Provider store={store}>
           <Toaster />
-          <Navbar />
-          {/* {!isDashboardRoute && <Navbar />} */}
-          {children}
-          <Footer />
-          {/* {!isDashboardRoute && <Footer />} */}
+          {!isDashboardRoute && <Navbar />}
+          <div>{children}</div>
+          {!isDashboardRoute && <Footer />}
         </Provider>
       </body>
     </html>

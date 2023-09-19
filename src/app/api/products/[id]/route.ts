@@ -27,7 +27,7 @@ export async function PUT(req: Request, res: NextResponse) {
 
   try {
     const body = await req.json();
-    console.log(body);
+    console.log("request update body", body);
 
     const updatedProduct = await updateProduct(id, body);
 

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { BiMessageSquare } from "react-icons/bi";
 import { FaBell, FaUserCircle } from "react-icons/fa";
 import { FiMaximize, FiMinimize, FiMoon, FiSun } from "react-icons/fi";
+import { TbLayoutSidebarLeftCollapseFilled } from "react-icons/tb";
 import { useDispatch } from "react-redux";
 
 export default function DashboardNavbar() {
@@ -140,11 +141,12 @@ export default function DashboardNavbar() {
   return (
     <nav
       className={`px-2 py-3 ${
-        isDarkMode ? "bg-gray-900 text-white" : "bg-white text-gray-800"
+        isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <TbLayoutSidebarLeftCollapseFilled />
+        <div className="flex justify-between items-center h-16">
           <div className="flex">
             {/* dashboard logo */}
             <Link href="/" className="flex-shrink-0 flex items-center">
@@ -172,9 +174,9 @@ export default function DashboardNavbar() {
                 onClick={handleFullscreen}
               >
                 {isFullscreen ? (
-                  <FiMinimize className="h-6 w-6" />
+                  <FiMinimize size={24} className="h-6 w-6" />
                 ) : (
-                  <FiMaximize className="h-6 w-6" />
+                  <FiMaximize size={24} className="h-6 w-6" />
                 )}
               </button>
             </div>
@@ -187,7 +189,7 @@ export default function DashboardNavbar() {
                   variants={iconVariants}
                   animate={showMessages ? "open" : "closed"}
                 >
-                  <BiMessageSquare className="w-6 h-6" />
+                  <BiMessageSquare size={24} className="w-6 h-6" />
                 </motion.button>
                 {showMessages && (
                   <div className="absolute right-0 w-64 bg-white shadow-lg rounded-lg mt-2">
@@ -228,7 +230,7 @@ export default function DashboardNavbar() {
                 className=" p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                 onClick={handleNotifications}
               >
-                <FaBell className="w-6 h-6" />
+                <FaBell size={24} className="w-6 h-6" />
               </button>
               <div
                 className={`${
@@ -272,7 +274,10 @@ export default function DashboardNavbar() {
                     aria-haspopup="true"
                   >
                     <span className="sr-only">Open user menu</span>
-                    <FaUserCircle className="h-8 w-8 rounded-full text-gray-400" />
+                    <FaUserCircle
+                      size={24}
+                      className="h-8 w-8 rounded-full text-gray-400"
+                    />
                   </button>
                 </div>
                 {showUserDropdown && (
