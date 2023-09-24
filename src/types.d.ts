@@ -1,6 +1,5 @@
 // auth
 
-//
 // category
 interface ICategory {
   id?: string;
@@ -15,6 +14,12 @@ interface IProduct {
   imageUrl: string;
   stockCount: number;
   categoryId?: string;
+  reviews: {
+    userId: string;
+    rating: number;
+    comment: string;
+    createdAt: Date;
+  }[];
   quantity: number;
   Category: ICategory;
 }

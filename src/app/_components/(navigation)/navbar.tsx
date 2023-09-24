@@ -1,11 +1,12 @@
-import { useState } from "react";
-
+// import
 import { RootState } from "@/features/store";
 import Link from "next/link";
+import { useState } from "react";
 import { BsCart3, BsHeart } from "react-icons/bs";
 import { VscAccount } from "react-icons/vsc";
 import { useDispatch, useSelector } from "react-redux";
 export default function Navbar() {
+  // state for show/hide links
   const [showLinks, setShowLinks] = useState(false);
 
   // user from redux
@@ -43,6 +44,9 @@ export default function Navbar() {
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             <Link href="/shop" className="mx-2 font-bold text-yellow-500">
               Shop
+            </Link>
+            <Link href="/products" className="mx-2 font-bold text-yellow-500">
+              Products
             </Link>
             <Link href="/offer" className="mx-2 font-bold text-yellow-500">
               Offer
