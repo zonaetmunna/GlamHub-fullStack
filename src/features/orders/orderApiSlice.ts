@@ -8,6 +8,9 @@ export interface OrdersQuery {
   userId?: string;
   startDate?: string;
   endDate?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }
 
 export interface OrdersResponse {

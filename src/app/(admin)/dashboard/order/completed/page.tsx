@@ -4,34 +4,32 @@ import { useGetOrdersQuery } from "@/features/orders/orderApiSlice";
 import Link from "next/link";
 import { useState } from "react";
 import {
-  FaCalendarAlt,
   FaCheckCircle,
   FaDownload,
   FaEye,
-  FaFileInvoiceDollar,
   FaFilter,
-  FaPrint,
   FaSearch,
-  FaTimesCircle,
+  FaShippingFast,
+  FaStar,
   FaUser,
 } from "react-icons/fa";
 
-export default function InvoicePage() {
+export default function CompletedOrdersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
   const [dateFilter, setDateFilter] = useState("");
-  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortBy, setSortBy] = useState("completedAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const {
-    data: invoicesData,
+    data: ordersData,
     isLoading,
     error,
     refetch,
   } = useGetOrdersQuery({
     page: currentPage,
     limit: 10,
+    status: "COMPLETED",
     search: searchQuery,
     sortBy,
     sortOrder,
@@ -43,18 +41,6 @@ export default function InvoicePage() {
     refetch();
   };
 
-  const handleFilterChange = (filterType: string, value: string) => {
-    switch (filterType) {
-      case "status":
-        setStatusFilter(value);
-        break;
-      case "date":
-        setDateFilter(value);
-        break;
-    }
-    setCurrentPage(1);
-  };
-
   const handleSort = (field: string) => {
     if (sortBy === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -63,40 +49,6 @@ export default function InvoicePage() {
       setSortOrder("asc");
     }
     setCurrentPage(1);
-  };
-
-  const getPaymentStatusColor = (status: string) => {
-    switch (status) {
-      case "PAID":
-        return "bg-green-500/20 text-green-400";
-      case "PENDING":
-        return "bg-yellow-500/20 text-yellow-400";
-      case "FAILED":
-        return "bg-red-500/20 text-red-400";
-      case "REFUNDED":
-        return "bg-blue-500/20 text-blue-400";
-      default:
-        return "bg-gray-500/20 text-gray-400";
-    }
-  };
-
-  const getPaymentStatusIcon = (status: string) => {
-    switch (status) {
-      case "PAID":
-        return <FaCheckCircle className="w-4 h-4" />;
-      case "PENDING":
-        return <FaCalendarAlt className="w-4 h-4" />;
-      case "FAILED":
-        return <FaTimesCircle className="w-4 h-4" />;
-      case "REFUNDED":
-        return <FaDownload className="w-4 h-4" />;
-      default:
-        return <FaFileInvoiceDollar className="w-4 h-4" />;
-    }
-  };
-
-  const generateInvoiceNumber = (orderId: string) => {
-    return `INV-${orderId.slice(-8).toUpperCase()}`;
   };
 
   if (isLoading) {
@@ -110,7 +62,9 @@ export default function InvoicePage() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="text-red-400 text-lg mb-4">Failed to load invoices</div>
+        <div className="text-red-400 text-lg mb-4">
+          Failed to load completed orders
+        </div>
         <button
           onClick={() => refetch()}
           className="bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-pink-600 transition-colors"
@@ -127,11 +81,9 @@ export default function InvoicePage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">
-            Invoice Management
+            Completed Orders
           </h1>
-          <p className="text-gray-400">
-            Manage invoices, billing, and payment tracking
-          </p>
+          <p className="text-gray-400">Successfully fulfilled orders</p>
         </div>
         <div className="flex items-center space-x-4 mt-4 sm:mt-0">
           <button className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
@@ -139,8 +91,8 @@ export default function InvoicePage() {
             <span>Export Report</span>
           </button>
           <button className="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-            <FaFileInvoiceDollar className="w-4 h-4" />
-            <span>Bulk Invoice</span>
+            <FaStar className="w-4 h-4" />
+            <span>Customer Reviews</span>
           </button>
         </div>
       </div>
@@ -150,25 +102,9 @@ export default function InvoicePage() {
         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Total Invoices</p>
+              <p className="text-sm text-gray-400">Total Completed</p>
               <p className="text-2xl font-bold text-white">
-                {invoicesData?.pagination?.totalCount || 0}
-              </p>
-            </div>
-            <div className="p-3 bg-blue-500/20 rounded-lg">
-              <FaFileInvoiceDollar className="w-6 h-6 text-blue-400" />
-            </div>
-          </div>
-        </div>
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">Total Revenue</p>
-              <p className="text-2xl font-bold text-white">
-                $
-                {invoicesData?.data
-                  ?.reduce((sum, invoice) => sum + invoice.totalAmount, 0)
-                  .toFixed(2) || "0.00"}
+                {ordersData?.pagination?.totalCount || 0}
               </p>
             </div>
             <div className="p-3 bg-green-500/20 rounded-lg">
@@ -179,42 +115,57 @@ export default function InvoicePage() {
         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Pending Payments</p>
+              <p className="text-sm text-gray-400">Total Revenue</p>
               <p className="text-2xl font-bold text-white">
                 $
-                {invoicesData?.data
-                  ?.filter((invoice) => invoice.paymentStatus === "PENDING")
-                  .reduce((sum, invoice) => sum + invoice.totalAmount, 0)
+                {ordersData?.data
+                  ?.reduce((sum, order) => sum + order.totalAmount, 0)
                   .toFixed(2) || "0.00"}
               </p>
             </div>
-            <div className="p-3 bg-yellow-500/20 rounded-lg">
-              <FaCalendarAlt className="w-6 h-6 text-yellow-400" />
+            <div className="p-3 bg-blue-500/20 rounded-lg">
+              <FaShippingFast className="w-6 h-6 text-blue-400" />
             </div>
           </div>
         </div>
         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Paid This Month</p>
+              <p className="text-sm text-gray-400">Average Order Value</p>
               <p className="text-2xl font-bold text-white">
                 $
-                {invoicesData?.data
-                  ?.filter((invoice) => {
-                    const invoiceDate = new Date(invoice.createdAt);
-                    const now = new Date();
-                    return (
-                      invoice.paymentStatus === "PAID" &&
-                      invoiceDate.getMonth() === now.getMonth() &&
-                      invoiceDate.getFullYear() === now.getFullYear()
-                    );
-                  })
-                  .reduce((sum, invoice) => sum + invoice.totalAmount, 0)
-                  .toFixed(2) || "0.00"}
+                {ordersData?.data?.length
+                  ? (
+                      ordersData.data.reduce(
+                        (sum, order) => sum + order.totalAmount,
+                        0
+                      ) / ordersData.data.length
+                    ).toFixed(2)
+                  : "0.00"}
               </p>
             </div>
             <div className="p-3 bg-purple-500/20 rounded-lg">
               <FaUser className="w-6 h-6 text-purple-400" />
+            </div>
+          </div>
+        </div>
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-400">This Month</p>
+              <p className="text-2xl font-bold text-white">
+                {ordersData?.data?.filter((order) => {
+                  const orderDate = new Date(order.createdAt);
+                  const now = new Date();
+                  return (
+                    orderDate.getMonth() === now.getMonth() &&
+                    orderDate.getFullYear() === now.getFullYear()
+                  );
+                }).length || 0}
+              </p>
+            </div>
+            <div className="p-3 bg-orange-500/20 rounded-lg">
+              <FaCheckCircle className="w-6 h-6 text-orange-400" />
             </div>
           </div>
         </div>
@@ -229,7 +180,7 @@ export default function InvoicePage() {
           <div className="flex-1 relative">
             <input
               type="text"
-              placeholder="Search invoices by number, customer, or order ID..."
+              placeholder="Search orders by ID, customer name, or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white/10 border border-white/20 rounded-lg py-2 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
@@ -237,26 +188,24 @@ export default function InvoicePage() {
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           </div>
           <div className="relative">
-            <select
-              value={statusFilter}
-              onChange={(e) => handleFilterChange("status", e.target.value)}
-              className="bg-white/10 border border-white/20 rounded-lg py-2 pl-10 pr-8 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-            >
-              <option value="">All Status</option>
-              <option value="PAID">Paid</option>
-              <option value="PENDING">Pending</option>
-              <option value="FAILED">Failed</option>
-              <option value="REFUNDED">Refunded</option>
-            </select>
-            <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          </div>
-          <div className="relative">
             <input
               type="date"
               value={dateFilter}
-              onChange={(e) => handleFilterChange("date", e.target.value)}
+              onChange={(e) => setDateFilter(e.target.value)}
               className="bg-white/10 border border-white/20 rounded-lg py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
+          </div>
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-white/10 border border-white/20 rounded-lg py-2 pl-10 pr-8 text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+            >
+              <option value="completedAt">Sort by Completion Date</option>
+              <option value="totalAmount">Sort by Amount</option>
+              <option value="customerName">Sort by Customer</option>
+            </select>
+            <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           </div>
           <button
             type="submit"
@@ -267,20 +216,17 @@ export default function InvoicePage() {
         </form>
       </div>
 
-      {/* Invoices Table */}
+      {/* Orders Table */}
       <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-white/10">
               <tr>
                 <th className="text-left p-4 font-medium text-white">
-                  Invoice #
+                  Order ID
                 </th>
                 <th className="text-left p-4 font-medium text-white">
                   Customer
-                </th>
-                <th className="text-left p-4 font-medium text-white">
-                  Order ID
                 </th>
                 <th className="text-left p-4 font-medium text-white">
                   <button
@@ -295,13 +241,17 @@ export default function InvoicePage() {
                     )}
                   </button>
                 </th>
+                <th className="text-left p-4 font-medium text-white">Items</th>
+                <th className="text-left p-4 font-medium text-white">
+                  Order Date
+                </th>
                 <th className="text-left p-4 font-medium text-white">
                   <button
-                    onClick={() => handleSort("createdAt")}
+                    onClick={() => handleSort("completedAt")}
                     className="flex items-center space-x-1 hover:text-pink-400 transition-colors"
                   >
-                    <span>Invoice Date</span>
-                    {sortBy === "createdAt" && (
+                    <span>Completed Date</span>
+                    {sortBy === "completedAt" && (
                       <span className="text-pink-400">
                         {sortOrder === "asc" ? "↑" : "↓"}
                       </span>
@@ -309,85 +259,73 @@ export default function InvoicePage() {
                   </button>
                 </th>
                 <th className="text-left p-4 font-medium text-white">
-                  Payment Status
-                </th>
-                <th className="text-left p-4 font-medium text-white">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody>
-              {invoicesData?.data?.map((invoice) => (
-                <tr key={invoice.id} className="border-t border-white/10">
+              {ordersData?.data?.map((order) => (
+                <tr key={order.id} className="border-t border-white/10">
                   <td className="p-4">
-                    <div className="font-medium text-white">
-                      {generateInvoiceNumber(invoice.id)}
-                    </div>
+                    <div className="font-medium text-white">#{order.id}</div>
                   </td>
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
                         <span className="text-white font-semibold text-sm">
-                          {invoice.user?.name?.charAt(0) || "U"}
+                          {order.user?.name?.charAt(0) || "U"}
                         </span>
                       </div>
                       <div>
                         <p className="font-medium text-white">
-                          {invoice.user?.name || "Unknown User"}
+                          {order.user?.name || "Unknown User"}
                         </p>
                         <p className="text-sm text-gray-400">
-                          {invoice.user?.email}
+                          {order.user?.email}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="p-4">
                     <div className="font-medium text-white">
-                      #{invoice.id.slice(-8)}
+                      ${order.totalAmount.toFixed(2)}
                     </div>
                   </td>
                   <td className="p-4">
-                    <div className="font-medium text-white">
-                      ${invoice.totalAmount.toFixed(2)}
-                    </div>
-                    {invoice.discountAmount > 0 && (
-                      <div className="text-sm text-green-400">
-                        Discount: -${invoice.discountAmount.toFixed(2)}
-                      </div>
-                    )}
+                    <span className="text-white">
+                      {order.items?.length || 0} items
+                    </span>
                   </td>
                   <td className="p-4">
                     <div className="text-white">
-                      {new Date(invoice.createdAt).toLocaleDateString()}
+                      {new Date(order.createdAt).toLocaleDateString()}
                     </div>
                     <div className="text-sm text-gray-400">
-                      {new Date(invoice.createdAt).toLocaleTimeString()}
+                      {new Date(order.createdAt).toLocaleTimeString()}
                     </div>
                   </td>
                   <td className="p-4">
-                    <div
-                      className={`inline-flex items-center space-x-2 px-2 py-1 text-xs rounded-full ${getPaymentStatusColor(
-                        invoice.paymentStatus
-                      )}`}
-                    >
-                      {getPaymentStatusIcon(invoice.paymentStatus)}
-                      <span>{invoice.paymentStatus}</span>
+                    <div className="text-white">
+                      {new Date(order.updatedAt).toLocaleDateString()}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      {new Date(order.updatedAt).toLocaleTimeString()}
                     </div>
                   </td>
                   <td className="p-4">
                     <div className="flex items-center space-x-2">
                       <Link
-                        href={`/dashboard/invoice/${invoice.id}`}
+                        href={`/dashboard/order/${order.id}`}
                         className="p-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors"
                       >
                         <FaEye className="w-4 h-4" />
                       </Link>
-                      <button className="p-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors">
+                      <Link
+                        href={`/dashboard/invoice/${order.id}`}
+                        className="p-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors"
+                      >
                         <FaDownload className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors">
-                        <FaPrint className="w-4 h-4" />
-                      </button>
+                      </Link>
                     </div>
                   </td>
                 </tr>
@@ -397,36 +335,36 @@ export default function InvoicePage() {
         </div>
 
         {/* Pagination */}
-        {invoicesData?.pagination && (
+        {ordersData?.pagination && (
           <div className="p-4 border-t border-white/10">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-400">
                 Showing{" "}
-                {(invoicesData.pagination.page - 1) *
-                  invoicesData.pagination.limit +
+                {(ordersData.pagination.page - 1) *
+                  ordersData.pagination.limit +
                   1}{" "}
                 to{" "}
                 {Math.min(
-                  invoicesData.pagination.page * invoicesData.pagination.limit,
-                  invoicesData.pagination.totalCount
+                  ordersData.pagination.page * ordersData.pagination.limit,
+                  ordersData.pagination.totalCount
                 )}{" "}
-                of {invoicesData.pagination.totalCount} invoices
+                of {ordersData.pagination.totalCount} completed orders
               </div>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setCurrentPage(currentPage - 1)}
-                  disabled={!invoicesData.pagination.hasPreviousPage}
+                  disabled={!ordersData.pagination.hasPreviousPage}
                   className="px-3 py-1 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
                 <span className="text-white">
-                  Page {invoicesData.pagination.page} of{" "}
-                  {invoicesData.pagination.totalPages}
+                  Page {ordersData.pagination.page} of{" "}
+                  {ordersData.pagination.totalPages}
                 </span>
                 <button
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={!invoicesData.pagination.hasNextPage}
+                  disabled={!ordersData.pagination.hasNextPage}
                   className="px-3 py-1 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next

@@ -83,6 +83,26 @@ export interface CreateJobApplicationRequest {
   resumeUrl: string;
 }
 
+export interface CreateJobRequest {
+  title: string;
+  description: string;
+  requirements: string;
+  location: string;
+  jobType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP";
+  salary?: string;
+  status: "ACTIVE" | "CLOSED" | "DRAFT";
+}
+
+export interface UpdateJobRequest {
+  title?: string;
+  description?: string;
+  requirements?: string;
+  location?: string;
+  jobType?: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP";
+  salary?: string;
+  status?: "ACTIVE" | "CLOSED" | "DRAFT";
+}
+
 export const jobApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Get all jobs
@@ -103,6 +123,38 @@ export const jobApiSlice = apiSlice.injectEndpoints({
     getJob: builder.query<SingleJobResponse, string>({
       query: (id) => `/jobs/${id}`,
       providesTags: (result, error, id) => [{ type: "Job", id }],
+    }),
+
+    // Create job (Admin only)
+    createJob: builder.mutation<SingleJobResponse, CreateJobRequest>({
+      query: (jobData) => ({
+        url: "/jobs",
+        method: "POST",
+        body: jobData,
+      }),
+      invalidatesTags: ["Job"],
+    }),
+
+    // Update job (Admin only)
+    updateJob: builder.mutation<
+      SingleJobResponse,
+      { id: string; data: UpdateJobRequest }
+    >({
+      query: ({ id, data }) => ({
+        url: `/jobs/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Job", id }],
+    }),
+
+    // Delete job (Admin only)
+    deleteJob: builder.mutation<{ success: boolean; message: string }, string>({
+      query: (id) => ({
+        url: `/jobs/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "Job", id }],
     }),
 
     // Apply for job
@@ -133,6 +185,9 @@ export const jobApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetJobsQuery,
   useGetJobQuery,
+  useCreateJobMutation,
+  useUpdateJobMutation,
+  useDeleteJobMutation,
   useApplyForJobMutation,
   useGetUserApplicationsQuery,
 } = jobApiSlice;
