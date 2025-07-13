@@ -86,6 +86,7 @@ export async function getCurrentUser(
         email: true,
         name: true,
         createdAt: true,
+        role: true,
       },
     });
 
@@ -95,7 +96,7 @@ export async function getCurrentUser(
       id: user.id,
       email: user.email,
       name: user.name || undefined,
-      role: "USER", // Default role until schema is updated
+      role: user.role, // Default role until schema is updated
     };
   } catch (error) {
     return null;

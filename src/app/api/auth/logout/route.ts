@@ -14,6 +14,8 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
+    console.log("response", response);
+
     response.cookies.set("auth-token", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

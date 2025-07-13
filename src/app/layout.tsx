@@ -1,10 +1,11 @@
 "use client";
 
-import { store } from "@/features/store";
+import { persistor, store } from "@/features/store";
 import { Inter } from "next/font/google";
 import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 import Footer from "./_components/(footer)/footer";
 import Navbar from "./_components/(navigation)/navbar";
 import "./globals.css";
@@ -22,16 +23,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  // console user
+
   const pathname = usePathname();
   const isDashboardRoute = pathname.startsWith("/dashboard");
   return (
     <html lang="en">
       <body className={inter.className}>
         <Provider store={store}>
-          <Toaster />
-          {!isDashboardRoute && <Navbar />}
-          <div>{children}</div>
-          {!isDashboardRoute && <Footer />}
+          <PersistGate loading={null} persistor={persistor}>
+            <Toaster />
+            {!isDashboardRoute && <Navbar />}
+            <div>{children}</div>
+            {!isDashboardRoute && <Footer />}
+          </PersistGate>
         </Provider>
       </body>
     </html>

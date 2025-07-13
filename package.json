@@ -6,7 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma": "prisma",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "prisma:db:pull": "prisma db pull",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:migrate:reset": "prisma migrate reset --force"
   },
   "dependencies": {
     "@prisma/client": "^5.3.1",
@@ -42,6 +50,7 @@
     "react-icons": "^4.11.0",
     "react-redux": "^8.1.1",
     "react-select": "^5.7.4",
+    "redux-persist": "^6.0.0",
     "stripe": "^18.3.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "3.3.2",

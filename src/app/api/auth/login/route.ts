@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
         email: true,
         password: true,
         createdAt: true,
+        role: true,
       },
     });
 
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
       id: user.id,
       email: user.email,
       name: user.name || undefined,
-      role: "USER", // Default role until schema is updated
+      role: user.role, // Default role unt  il schema is updated
     });
 
     // Set authentication cookie and return response
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: "USER",
+          role: user.role,
           createdAt: user.createdAt,
         },
       },
