@@ -16,6 +16,7 @@ import {
   FaHome,
   FaShoppingBag,
   FaSignOutAlt,
+  FaSpa,
   FaUsers,
 } from "react-icons/fa";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -58,8 +59,21 @@ export default function DashboardSidebar() {
       submenu: [
         { label: "All Products", path: "/dashboard/product" },
         { label: "Add Product", path: "/dashboard/product/add" },
-        { label: "Categories", path: "/dashboard/category" },
+        { label: "Product Categories", path: "/dashboard/category" },
         { label: "Brands", path: "/dashboard/brand" },
+        { label: "Inventory", path: "/dashboard/inventory" },
+      ],
+    },
+    {
+      id: "services",
+      label: "Services",
+      icon: <FaSpa className="w-5 h-5" />,
+      path: "/dashboard/services",
+      submenu: [
+        { label: "All Services", path: "/dashboard/services" },
+        { label: "Add Service", path: "/dashboard/services/add" },
+        { label: "Service Categories", path: "/dashboard/services/categories" },
+        { label: "Service Bookings", path: "/dashboard/services/bookings" },
       ],
     },
     {
@@ -70,7 +84,9 @@ export default function DashboardSidebar() {
       submenu: [
         { label: "All Orders", path: "/dashboard/order" },
         { label: "Pending Orders", path: "/dashboard/order/pending" },
+        { label: "Completed Orders", path: "/dashboard/order/completed" },
         { label: "Invoices", path: "/dashboard/invoice" },
+        { label: "Payments", path: "/dashboard/payments" },
       ],
     },
     {
@@ -81,8 +97,8 @@ export default function DashboardSidebar() {
       submenu: [
         { label: "All Users", path: "/dashboard/users" },
         { label: "Customers", path: "/dashboard/customers" },
-        { label: "Staff", path: "/dashboard/staff" },
-        { label: "Make Admin", path: "/dashboard/make-admin" },
+        { label: "Staff Management", path: "/dashboard/staff" },
+        { label: "Admin Management", path: "/dashboard/make-admin" },
       ],
     },
     {
@@ -92,11 +108,12 @@ export default function DashboardSidebar() {
       path: "/dashboard/appointments",
       submenu: [
         { label: "All Appointments", path: "/dashboard/appointments" },
+        { label: "Today's Schedule", path: "/dashboard/appointments/today" },
+        { label: "Calendar View", path: "/dashboard/appointments/calendar" },
         {
-          label: "Today's Appointments",
-          path: "/dashboard/appointments/today",
+          label: "Appointment Settings",
+          path: "/dashboard/appointments/settings",
         },
-        { label: "Services", path: "/dashboard/services" },
       ],
     },
     {
@@ -106,7 +123,9 @@ export default function DashboardSidebar() {
       path: "/dashboard/jobs",
       submenu: [
         { label: "Job Listings", path: "/dashboard/jobs" },
+        { label: "Add Job", path: "/dashboard/jobs/add" },
         { label: "Applications", path: "/dashboard/applications" },
+        { label: "Candidates", path: "/dashboard/candidates" },
       ],
     },
     {
@@ -115,9 +134,11 @@ export default function DashboardSidebar() {
       icon: <FaChartLine className="w-5 h-5" />,
       path: "/dashboard/analytics",
       submenu: [
+        { label: "Business Overview", path: "/dashboard/analytics" },
         { label: "Sales Analytics", path: "/dashboard/analytics/sales" },
         { label: "User Analytics", path: "/dashboard/analytics/users" },
         { label: "Product Analytics", path: "/dashboard/analytics/products" },
+        { label: "Service Analytics", path: "/dashboard/analytics/services" },
       ],
     },
     {
@@ -128,7 +149,8 @@ export default function DashboardSidebar() {
       submenu: [
         { label: "Messages", path: "/dashboard/message" },
         { label: "Notifications", path: "/dashboard/notifications" },
-        { label: "Blog Posts", path: "/dashboard/blog" },
+        { label: "Email Templates", path: "/dashboard/email-templates" },
+        { label: "SMS Settings", path: "/dashboard/sms" },
       ],
     },
     {
@@ -138,8 +160,10 @@ export default function DashboardSidebar() {
       path: "/dashboard/setting",
       submenu: [
         { label: "General Settings", path: "/dashboard/setting" },
-        { label: "Site Settings", path: "/dashboard/setting/site" },
+        { label: "Site Configuration", path: "/dashboard/setting/site" },
         { label: "Payment Settings", path: "/dashboard/setting/payment" },
+        { label: "Security Settings", path: "/dashboard/setting/security" },
+        { label: "Email Settings", path: "/dashboard/setting/email" },
       ],
     },
   ];

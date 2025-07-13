@@ -9,7 +9,7 @@ import {
   FaEnvelope,
   FaPalette,
   FaSave,
-  FaShield,
+  FaShieldAlt,
   FaToggleOff,
   FaToggleOn,
 } from "react-icons/fa";
@@ -48,7 +48,7 @@ export default function SettingsPage() {
 
   const tabs = [
     { id: "general", label: "General", icon: FaCog },
-    { id: "security", label: "Security", icon: FaShield },
+    { id: "security", label: "Security", icon: FaShieldAlt },
     { id: "email", label: "Email", icon: FaEnvelope },
     { id: "payments", label: "Payments", icon: FaCreditCard },
     { id: "appearance", label: "Appearance", icon: FaPalette },

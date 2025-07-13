@@ -21,6 +21,7 @@ export const apiSlice = createApi({
   tagTypes: [
     "Product",
     "Service",
+    "ServiceCategory",
     "Category",
     "Brand",
     "User",

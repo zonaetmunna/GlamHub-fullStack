@@ -19,6 +19,7 @@ export interface Service {
     name: string;
     specialization: string;
   }[];
+  bookingCount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -53,6 +54,27 @@ export interface ServicesQuery {
   staffId?: string;
 }
 
+export interface CreateServiceRequest {
+  name: string;
+  description: string;
+  price: number;
+  duration: number;
+  imageUrl?: string;
+  categoryId?: string;
+  staffIds?: string[];
+}
+
+export interface UpdateServiceRequest {
+  name?: string;
+  description?: string;
+  price?: number;
+  duration?: number;
+  imageUrl?: string;
+  categoryId?: string;
+  staffIds?: string[];
+  isActive?: boolean;
+}
+
 export const serviceApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Get all services
@@ -75,6 +97,44 @@ export const serviceApiSlice = apiSlice.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "Service", id }],
     }),
 
+    // Create service
+    createService: builder.mutation<
+      SingleServiceResponse,
+      CreateServiceRequest
+    >({
+      query: (serviceData) => ({
+        url: "/services",
+        method: "POST",
+        body: serviceData,
+      }),
+      invalidatesTags: ["Service"],
+    }),
+
+    // Update service
+    updateService: builder.mutation<
+      SingleServiceResponse,
+      { id: string; data: UpdateServiceRequest }
+    >({
+      query: ({ id, data }) => ({
+        url: `/services/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Service", id }],
+    }),
+
+    // Delete service
+    deleteService: builder.mutation<
+      { success: boolean; message: string },
+      string
+    >({
+      query: (id) => ({
+        url: `/services/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "Service", id }],
+    }),
+
     // Search services
     searchServices: builder.query<
       ServicesResponse,
@@ -90,5 +150,8 @@ export const serviceApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetServicesQuery,
   useGetServiceQuery,
+  useCreateServiceMutation,
+  useUpdateServiceMutation,
+  useDeleteServiceMutation,
   useSearchServicesQuery,
 } = serviceApiSlice;
