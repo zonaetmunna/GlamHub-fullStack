@@ -51,6 +51,7 @@ export default function Product() {
       console.log("Product retrieval error:", error);
     }
   };
+  
   const fetchCategories = async () => {
     try {
       const response = await fetch(API_BASE_URL_CATEGORIES);

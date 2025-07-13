@@ -7,71 +7,297 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// user relatd model
+// User model with role-based access
 model User {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   name         String?
   email        String        @unique
   password     String
-  orders       Order[]
+  role         UserRole      @default(USER)
+  phone        String?
+  address      String?
+  city         String?
+  country      String?
   profileImage String?
-  Appointment  Appointment[]
+  isActive     Boolean       @default(true)
+  orders       Order[]
+  appointments Appointment[]
+  reviews      Review[]
+  jobApplications JobApplication[]
   createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
-// product related model
+enum UserRole {
+  USER
+  ADMIN
+  STAFF
+}
+
+// Enhanced Product model
 model Product {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   price       Float
   imageUrl    String?
+  images      String[] // Multiple images support
   stockCount  Int
-  Category    Category @relation(fields: [categoryId], references: [id])
+  isFeatured  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  category    Category @relation(fields: [categoryId], references: [id])
   categoryId  String   @db.ObjectId
-  Order       Order?   @relation(fields: [orderId], references: [id])
-  orderId     String?  @db.ObjectId
+  reviews     Review[]
+  orderItems  OrderItem[]
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
+// Enhanced Category model with nested support
 model Category {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  products Product[]
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  imageUrl    String?
+  type        CategoryType @default(PRODUCT)
+  parentId    String?    @db.ObjectId
+  parent      Category?  @relation("CategoryParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children    Category[] @relation("CategoryParent")
+  products    Product[]
+  services    Service[]
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
-// order 
+enum CategoryType {
+  PRODUCT
+  SERVICE
+}
+
+// Enhanced Order model
 model Order {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  user      User      @relation(fields: [userId], references: [id])
-  userId    String    @db.ObjectId
-  products  Product[]
-  status    String
-  createdAt DateTime  @default(now())
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  user            User          @relation(fields: [userId], references: [id])
+  userId          String        @db.ObjectId
+  orderNumber     String        @unique
+  items           OrderItem[]
+  status          OrderStatus   @default(PENDING)
+  totalAmount     Float
+  shippingAddress String
+  billingAddress  String
+  paymentMethod   String?
+  paymentStatus   PaymentStatus @default(PENDING)
+  stripePaymentId String?
+  shippingCost    Float         @default(0)
+  discountCode    String?
+  discountAmount  Float         @default(0)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
-// services related model
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+// Order Items model
+model OrderItem {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @db.ObjectId
+  quantity  Int
+  price     Float
+  createdAt DateTime @default(now())
+}
+
+// Enhanced Service model
 model Service {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   price       Float
+  duration    Int           // Duration in minutes
   imageUrl    String?
-  createdAt   DateTime @default(now())
-
-  // Define the relation to appointments
+  images      String[]      // Multiple images support
+  category    Category      @relation(fields: [categoryId], references: [id])
+  categoryId  String        @db.ObjectId
+  staffServices ServiceStaff[]
   appointments Appointment[]
+  timeSlots   TimeSlot[]
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
-model Appointment {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  user          User     @relation(fields: [userId], references: [id])
-  userId        String   @db.ObjectId
-  scheduledTime DateTime // Date and time of the appointment
-  status        String // Appointment status (e.g., confirmed, canceled, etc.)
-  createdAt     DateTime @default(now())
+// Staff model
+model Staff {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String        @unique
+  phone        String?
+  specialization String?
+  imageUrl     String?
+  staffServices ServiceStaff[]
+  appointments Appointment[]
+  timeSlots    TimeSlot[]
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
 
-  // Define the relation to service
-  service   Service @relation(fields: [serviceId], references: [id])
-  serviceId String  @db.ObjectId
+// Junction table for Service-Staff many-to-many relationship
+model ServiceStaff {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  service   Service  @relation(fields: [serviceId], references: [id])
+  serviceId String   @db.ObjectId
+  staff     Staff    @relation(fields: [staffId], references: [id])
+  staffId   String   @db.ObjectId
+  createdAt DateTime @default(now())
+
+  @@unique([serviceId, staffId])
+}
+
+// Time Slots model
+model TimeSlot {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  service     Service       @relation(fields: [serviceId], references: [id])
+  serviceId   String        @db.ObjectId
+  staff       Staff         @relation(fields: [staffId], references: [id])
+  staffId     String        @db.ObjectId
+  startTime   DateTime
+  endTime     DateTime
+  isAvailable Boolean       @default(true)
+  appointments Appointment[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+// Enhanced Appointment model
+model Appointment {
+  id            String            @id @default(auto()) @map("_id") @db.ObjectId
+  user          User              @relation(fields: [userId], references: [id])
+  userId        String            @db.ObjectId
+  service       Service           @relation(fields: [serviceId], references: [id])
+  serviceId     String            @db.ObjectId
+  staff         Staff             @relation(fields: [staffId], references: [id])
+  staffId       String            @db.ObjectId
+  timeSlot      TimeSlot          @relation(fields: [timeSlotId], references: [id])
+  timeSlotId    String            @db.ObjectId
+  scheduledTime DateTime
+  status        AppointmentStatus @default(REQUESTED)
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+}
+
+enum AppointmentStatus {
+  REQUESTED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// Review model
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String   @db.ObjectId
+  rating    Int      // 1-5 stars
+  comment   String?
+  isApproved Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Job model
+model Job {
+  id           String           @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  description  String
+  requirements String
+  location     String
+  jobType      JobType          @default(FULL_TIME)
+  salary       String?
+  status       JobStatus        @default(ACTIVE)
+  applications JobApplication[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+}
+
+enum JobStatus {
+  ACTIVE
+  CLOSED
+  DRAFT
+}
+
+// Job Application model
+model JobApplication {
+  id        String              @id @default(auto()) @map("_id") @db.ObjectId
+  job       Job                 @relation(fields: [jobId], references: [id])
+  jobId     String              @db.ObjectId
+  user      User                @relation(fields: [userId], references: [id])
+  userId    String              @db.ObjectId
+  coverLetter String?
+  resumeUrl String
+  status    JobApplicationStatus @default(PENDING)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+enum JobApplicationStatus {
+  PENDING
+  REVIEWED
+  SHORTLISTED
+  REJECTED
+  HIRED
+}
+
+// Notification model
+model Notification {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String           @db.ObjectId
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  data      String?          // JSON data for additional info
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+enum NotificationType {
+  ORDER_PLACED
+  ORDER_CONFIRMED
+  ORDER_SHIPPED
+  ORDER_DELIVERED
+  APPOINTMENT_BOOKED
+  APPOINTMENT_CONFIRMED
+  APPOINTMENT_REMINDER
+  JOB_APPLICATION_RECEIVED
+  GENERAL
 }
